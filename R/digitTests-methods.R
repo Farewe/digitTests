@@ -53,7 +53,7 @@ print.dt.distr <- function(x, digits = getOption("digits"), ...) {
     out <- c(out, paste("p-value", if (startsWith(fp, "<")) fp else paste("=", fp)))
   }
   cat(strwrap(paste(out, collapse = ", ")), sep = "\n")
-  digitLabel <- switch(x$check, "first" = "leading", "last" = "last", "firsttwo" = "first two")
+  digitLabel <- switch(x$check, "first" = "leading", "second" = "second", "last" = "last", "firsttwo" = "first two")
   distLabel <- if (is.numeric(x$reference)) "reference" else x$reference
   cat(paste0("alternative hypothesis: ", digitLabel, " digit(s) are not distributed according to the ", distLabel, " distribution."))
   cat("\n")

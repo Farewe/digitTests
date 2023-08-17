@@ -60,7 +60,7 @@
 
 distr.test <- function(x, check = 'first', reference = 'benford') {
   
-  if (!(check %in% c("first", "last", "firsttwo")))
+  if (!(check %in% c("first", "second", "last", "firsttwo")))
     stop("Specify a valid input for the check argument.")
   
   dname <- deparse(substitute(x))

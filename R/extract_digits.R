@@ -55,6 +55,18 @@ extract_digits <- function(x, check = 'first', include.zero = FALSE) {
       digits <- as.numeric(substring(format(abs(x), scientific = TRUE), 1, 1))
       digits[x == 0] <- NA
     }
+  } else if (check == "second") {
+    if (include.zero) {
+      x <- formatC(abs(x), digits = 10, format = "f")
+      x <- gsub(x = x, pattern = "[.]", replacement = "")
+      digits <- as.numeric(substring(x, 2, 2))
+    } else {
+      # Take the first character of the scientific value of x
+      x <- format(abs(x), scientific = TRUE)
+      x <- gsub(x = x, pattern = "[.]", replacement = "")
+      digits <- as.numeric(substring(x, 2, 2))
+      digits[x == 0] <- NA
+    }
   } else if (check == "firsttwo") {
     if (include.zero) {
       x <- formatC(abs(x), digits = 10, format = "f")

@@ -70,7 +70,7 @@
 distr.btest <- function(x, check = 'first', reference = 'benford',
                         alpha = NULL, BF10 = TRUE, log = FALSE) {
   
-  if (!(check %in% c("first", "last", "firsttwo")))
+  if (!(check %in% c("first", "second", "last", "firsttwo")))
     stop("Specify a valid input for the check argument.")
   
   dname <- deparse(substitute(x))
@@ -83,12 +83,14 @@ distr.btest <- function(x, check = 'first', reference = 'benford',
   n <- length(d)
   
   d_tab <- table(d)
-  dig <- if (check == "firsttwo") 10:99 else 1:9
+  dig <- if (check == "firsttwo") 10:99 else if (check == "second"){
+    0:9
+  } else 1:9
   
   obs <- rep(0, length(dig))
   d_included <- as.numeric(names(d_tab))
   index <- if (check == "firsttwo") d_included - 9 else d_included
-  obs[index] <- as.numeric(d_tab)
+  if(check == "second") obs[index + 1] <- as.numeric(d_tab) else obs[index] <- as.numeric(d_tab)
   
   p_obs <- obs / n
   
@@ -99,7 +101,18 @@ distr.btest <- function(x, check = 'first', reference = 'benford',
       stop("All elements in reference must be positive.")
     p_exp <- reference / sum(reference)
   } else if (reference == "benford") {
-    p_exp <- log10(1 + 1 / dig) # Benfords law: log_10(1 + 1 / d)
+    if(check == "second") { 
+      # Using generalised Benfords law for with k = 2 (second digit)
+      k <- 2
+      i <- 10^(k - 2):(10^(k - 1) - 1)
+
+      p_exp <- sapply(dig, function(digts) {
+        z <- i * 10 + digts
+        sum(log10(1 + 1/z))})
+    } else {
+      p_exp <- log10(1 + 1 / dig) # Benfords law: log_10(1 + 1 / d)    
+    }
+
   } else if (reference == "uniform") {
     p_exp <- rep(1 / length(dig), length(dig))
   } else {
